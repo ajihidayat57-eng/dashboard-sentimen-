@@ -74,6 +74,21 @@ def skor_prioritas(hasil):
     return t.sort_values("skor", ascending=False).reset_index()
 
 
+# Kata umum yang tidak informatif sebagai "inti keluhan"
+KATA_ABAIKAN = {"tidak", "banget", "sangat", "sekali", "juga", "bisa", "sama", "udah",
+                "aja", "lebih", "kurang", "terus", "pas", "kalau", "tapi", "belum",
+                "makin", "jadi", "dari", "nya", "padahal", "cuma"}
+
+
+def kata_teratas(teks_series, n=20):
+    """Hitung kata yang paling sering muncul. Dipakai untuk word cloud dan rekomendasi."""
+    from collections import Counter
+    hitung = Counter()
+    for t in teks_series.dropna():
+        hitung.update(k for k in bersihkan(t).split() if k not in KATA_ABAIKAN)
+    return dict(hitung.most_common(n))
+
+
 if __name__ == "__main__":
     import joblib
     model = joblib.load("model/model_sentimen.joblib")
